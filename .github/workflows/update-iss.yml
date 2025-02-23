@@ -5,6 +5,9 @@ on:
     - cron: "*/5 * * * *"  # Runs every 5 minutes
   workflow_dispatch:  # Allows manual runs
 
+permissions:
+  contents: write  # ✅ This allows GitHub Actions to push changes
+
 jobs:
   update:
     runs-on: ubuntu-latest
