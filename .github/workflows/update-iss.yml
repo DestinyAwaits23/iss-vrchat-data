@@ -1,0 +1,25 @@
+name: Update ISS Location
+
+on:
+  schedule:
+    - cron: '*/1 * * * *'  # Runs every minute
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch ISS location
+        run: |
+          curl -s http://api.open-notify.org/iss-now.json | jq '{latitude: .iss_position.latitude, longitude: .iss_position.longitude}' > iss-location.json
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add iss-location.json
+          git commit -m "Auto-update ISS location" || echo "No changes to commit"
+          git push
