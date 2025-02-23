@@ -15,12 +15,12 @@ jobs:
 
       - name: Fetch ISS Location
         run: |
-          curl -s "http://api.open-notify.org/iss-now.json" | jq '.' > iss-location.json
+          curl -s "http://api.open-notify.org/iss-now.json" > iss-location.json
 
       - name: Commit and push if changed
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add iss-location.json
-          git commit -m "Updated ISS location" || echo "No changes to commit"
+          git diff --cached --quiet || git commit -m "Updated ISS location"
           git push
