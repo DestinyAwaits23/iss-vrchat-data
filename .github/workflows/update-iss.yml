@@ -2,23 +2,17 @@ name: Update ISS Location
 
 on:
   schedule:
-    - cron: "*/1 * * * *"  # Runs every 5 minutes
-  workflow_dispatch:  # Allows manual runs
-
-permissions:
-  contents: write  # ✅ This allows GitHub Actions to push changes
+    - cron: '*/1 * * * *'  # Runs every 1 minute
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   update:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-      - name: Fetch ISS location
+      - name: Fetch ISS Location
         run: |
           curl -s "http://api.open-notify.org/iss-now.json" -o iss-location.json
 
@@ -27,4 +21,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add iss-location.json
-          git diff --staged --quiet || (git commit -m "Updated ISS location" && git push)
+          git commit -m "Auto-update ISS location" || exit 0
+          git push
