@@ -3,14 +3,15 @@ name: Update ISS Location
 on:
   schedule:
     - cron: '*/1 * * * *'  # Runs every 1 minute
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:  # Allows manual runs if needed
 
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Fetch ISS Location
         run: |
@@ -18,8 +19,7 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
           git add iss-location.json
-          git commit -m "Auto-update ISS location" || exit 0
-          git push
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update ISS location" && git push)
